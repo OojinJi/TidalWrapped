@@ -20,11 +20,10 @@ namespace TidalWrapped.Data.Models
         public string artist { get; set; }
         [Column("Album")]
         public string album { get; set; }
-        [Column("songDuration")]
-        public long songDuration { get; set; }
-        [Column("albumArt")]
-        public string albumArt { get; set; }
         [Column("whenPlayed")]
         public DateTime whenPlayed { get; set; }
+
+        [Column("trackPage")]
+        public string trackPage { get; set; }
     }
 }
