@@ -15,15 +15,17 @@ namespace TidalWrapped
     {
         private readonly DataService _dataService;
         private readonly ILogger<TidalWrappedLogic> _logger;
-      
+        private readonly EmailService _emailService;
+
         private readonly LastfmClient client;
-        public TidalWrappedLogic(DataService dataService, ILogger<TidalWrappedLogic> logger)
+        public TidalWrappedLogic(DataService dataService, ILogger<TidalWrappedLogic> logger, EmailService emailService)
         {
             _dataService = dataService;
             _logger = logger;
             var apiKey = Environment.GetEnvironmentVariable("TidalApiKey", EnvironmentVariableTarget.User);
             var apiSecret = Environment.GetEnvironmentVariable("TidalApiSecret", EnvironmentVariableTarget.User);
             client = new LastfmClient(apiKey, apiSecret);
+            _emailService = emailService;
         }
         public void mainLogic()
         {
@@ -35,11 +37,11 @@ namespace TidalWrapped
 
             Console.WriteLine("Auth Status: " + response.Status + "\n");
 
-            DateTimeOffset lastT = new DateTimeOffset(DateTime.Now - new TimeSpan(24, 0, 0));
+            DateTimeOffset lastT = new DateTimeOffset(DateTime.Now - new TimeSpan(25, 0, 0));
 
             Console.WriteLine(lastT.ToString());
 
-            var recent = client.User.GetRecentScrobbles(Username, lastT, DateTimeOffset.Now, true, 1, 10000).Result;
+            var recent = client.User.GetRecentScrobbles(Username, lastT, DateTimeOffset.Now, true, 1, 1000).Result;
 
             var tracks = recent.Select(async x =>
             new TrackModel
@@ -56,7 +58,5 @@ namespace TidalWrapped
 
             _dataService.InsertData(trackList);
         }
-
-
     }
 }

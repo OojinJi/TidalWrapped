@@ -30,6 +30,7 @@ public class Program
             })
             .AddSingleton<DataService>()
             .AddSingleton<TidalWrappedLogic>()
+            .AddSingleton<EmailService>()
             .BuildServiceProvider();
 
         return serviceProvider;
