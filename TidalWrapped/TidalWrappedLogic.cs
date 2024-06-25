@@ -1,5 +1,8 @@
-﻿using IF.Lastfm.Core.Api;
+﻿using DiscogsClient.Data.Query;
+using DiscogsClient.Internal;
+using IF.Lastfm.Core.Api;
 using Microsoft.Extensions.Logging;
+using RestSharpHelper.OAuth1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,16 +35,17 @@ namespace TidalWrapped
 
             var Username = Environment.GetEnvironmentVariable("TidalUsername", EnvironmentVariableTarget.User);
             var Password = Environment.GetEnvironmentVariable("TidalPassword", EnvironmentVariableTarget.User);
-
             var response = client.Auth.GetSessionTokenAsync(Username, Password);
+
+
 
             Console.WriteLine("Auth Status: " + response.Status + "\n");
 
-            DateTimeOffset lastT = new DateTimeOffset(DateTime.Now - new TimeSpan(25, 0, 0));
+            DateTimeOffset lastT = new DateTimeOffset(DateTime.Now - new TimeSpan(24, 0, 10000));
 
             Console.WriteLine(lastT.ToString());
 
-            var recent = client.User.GetRecentScrobbles(Username, lastT, DateTimeOffset.Now, true, 1, 1000).Result;
+            var recent = client.User.GetRecentScrobbles(Username, lastT, DateTimeOffset.Now, true, 1, 100).Result;
 
             var tracks = recent.Select(async x =>
             new TrackModel
@@ -51,12 +55,12 @@ namespace TidalWrapped
                 album = x.AlbumName,
                 trackPage = x.Url.ToString(),
                 whenPlayed = x.TimePlayed.HasValue ? x.TimePlayed.Value.DateTime.ToLocalTime() : DateTime.MinValue,
-                //releaseDate = client.Album.GetInfoAsync(x.ArtistName, x.AlbumName).Result.Content.ReleaseDateUtc.GetValueOrDefault().DateTime.Date,
             });
 
             var trackList = tracks.ToList();
 
             _dataService.InsertData(trackList);
+
         }
     }
 }

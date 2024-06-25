@@ -25,5 +25,10 @@ namespace TidalWrapped.Data.Models
 
         [Column("trackPage")]
         public string trackPage { get; set; }
+
+        [Column("DayID")]
+        public int DayID { get; set; }
+
+        public DaySum DaySum { get; set; }
     }
 }
