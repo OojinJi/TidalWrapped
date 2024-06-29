@@ -18,13 +18,14 @@ namespace TidalWrapped.Services
             var apiKey = Environment.GetEnvironmentVariable("smtpApiKey", EnvironmentVariableTarget.User);
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress(Environment.GetEnvironmentVariable("EmailFrom", EnvironmentVariableTarget.User), "TidalScraper");
-            var subject = "Daily LastFm scrape complete";
+            var subject = "Daily LastFm scrape complete for " + DateTime.Now.Date.AddDays(-1).ToShortDateString();
             var to = new EmailAddress(Environment.GetEnvironmentVariable("EmailTo", EnvironmentVariableTarget.User), "Oojin Ji");
             string msg = "";
             if(tracks.Count > 0)
             {
-                msg = "Total Listens: " + total + " Most active hour: " + mostPlayed.hour + ":00 with " + mostPlayed.count + " plays. <br>" +
-               "Songs added: <br>";
+                msg = "Total Listens: " + total + "<br> " +
+                    " Most active hour: " + mostPlayed.hour + ":00 with " + mostPlayed.count + " plays. <br>" +
+                    "Songs added: <br>";
                 foreach (string track in tracks)
                 {
                     msg += (track);
@@ -34,10 +35,7 @@ namespace TidalWrapped.Services
             {
                 msg = "No songs today";
             }
-
-
             var sentMail = MailHelper.CreateSingleEmail(from, to, subject, "", msg);
-
             var response = await client.SendEmailAsync(sentMail);
             Console.WriteLine(response.StatusCode);
 

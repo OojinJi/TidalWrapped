@@ -59,7 +59,7 @@ namespace TidalWrapped
 
             var trackList = tracks.ToList();
 
-            _dataService.InsertData(trackList);
+            _dataService.gernerateDaySum(trackList);
 
         }
     }
